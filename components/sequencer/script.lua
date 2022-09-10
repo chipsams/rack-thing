@@ -2,17 +2,26 @@ local newport = require "classes.ports"
 local inputs = require "classes.inputs"
 local v2d = require "vector"
 
-local image = love.graphics.newImage("components/bias/sprite.png")
+local image = love.graphics.newImage("components/sequencer/sprite.png")
+local toggle = love.graphics.newImage("components/sequencer/toggle.png")
 
 local function initComponent(self)
   --these are the defaults, but it doesn't matter for this case.
-  self.w = 1
+  self.w = 2
   self.h = 1
 
   self.inputs={}
 
-  inputs.simpleButton.create(self,v2d(4,4))
-  
+  self.buttons = {}
+
+  for lx=0,3 do
+    self.buttons[lx]={}
+    for ly=0,16 do
+      local button=inputs.simpleButton.create(self,v2d(18+lx*8,8+ly*5),toggle)
+      self.buttons[lx][ly]=button
+      self.inputs[#self.inputs+1]=button
+    end
+  end
 
   self.value=0
 
@@ -30,8 +39,6 @@ local function initComponent(self)
   end
 
   function self:genOutputs()
-    print("generating")
-    self.output:send(self.input.lastValue+self.inputs.offset.value)
   end
 end
 

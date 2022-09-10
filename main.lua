@@ -34,16 +34,17 @@ for l=0,4 do
   newcomponent(scene,3,l,components.calculator)
   newcomponent(scene,4,l,components.storage)
   newcomponent(scene,5,l,components.tinyPortTest)
+  newcomponent(scene,6,l,components.sequencer)
   --newcomponent(scene,10,l,components.bias)
   --newcomponent(scene,11,l,components.random)
 end
 --newcomponent(scene,7,1,components.ram)
 
-newcomponent(scene,7,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
-newcomponent(scene,7,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
-newcomponent(scene,7,2,components.TIS100,"")
-newcomponent(scene,7,3,components.TIS100,"")
-newcomponent(scene,7,4,components.TIS100,"")
+newcomponent(scene,9,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
+newcomponent(scene,9,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
+newcomponent(scene,9,2,components.TIS100,"")
+newcomponent(scene,9,3,components.TIS100,"")
+newcomponent(scene,9,4,components.TIS100,"")
 
 --newcomponent(scene,5,l,components.inputs)
 
