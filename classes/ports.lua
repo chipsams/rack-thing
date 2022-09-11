@@ -15,6 +15,9 @@ types.standard={
 function types.standard.clamp(v)
   return math.min(math.max(v,-999),999)
 end
+function types.standard.isLow(v)
+  return v<=0
+end
 
 types.either={
   clamp=types.standard.clamp,
@@ -27,6 +30,9 @@ types.either={
 function types.either:preLink(linkee)
   self.input=not linkee.input
 end
+function types.either.isLow(v)
+  return v<=0
+end
 
 types.boolean={
   linkingTypes={"boolean"},
@@ -38,6 +44,9 @@ types.boolean={
 function types.boolean.clamp(v)
   if type(v)=="number" then return v>0 end
   return v and true or false
+end
+function types.boolean.isLow(v)
+  return not v
 end
 
 for _,type in pairs(types) do
@@ -109,12 +118,14 @@ function port_mt:send(v)
   if v==nil then error("passed nil into a send! "..self.owner.name) end
   v = self.typeData.clamp(v)
   self.sending=v
-  if not (self.lastCycle==v) then
-    if not self.owner.scene.nextPending[self] then
-      table.insert(self.owner.scene.nextPending,self)
-      self.owner.scene.nextPending[self]=true
-    end
+  if self.lastSent~=v then
+    self.lastSent=v
+    self.owner.scene.nextPending[self]=v
   end
+  if self.link then
+    print(self.owner.name,"tried to send",v)
+  end
+  
 end
 
 return createPort

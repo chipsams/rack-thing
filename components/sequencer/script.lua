@@ -40,6 +40,7 @@ local function initComponent(self)
     newport(self,60,24,false,"boolean"), --c
     newport(self,60,33,false,"boolean"), --d
   }
+  self.condOut=newport(self,60,42,false,"boolean")
   self.out_index=newport(self,57,86)
   
   function self:draw(pos)
@@ -49,6 +50,12 @@ local function initComponent(self)
     end
     if self.running then
       love.graphics.draw(ticker,pos.x+9,pos.y+8+self.tick*5)
+    end
+    if self.stopNextTick then
+      love.graphics.rectangle("fill",pos.x+1,pos.y+1,6,3)
+    end
+    if self.startNextTick then
+      love.graphics.rectangle("fill",pos.x+1,pos.y+5,6,3)
     end
   end
   
@@ -60,18 +67,21 @@ local function initComponent(self)
         print(({"a","b","c","d"})[l],self.inputs.sequencerData.toggleData[l-1][self.tick])
       end
       print(self.stopNextTick)
-      if self.tick>16 or self.stopNextTick then self.tick, self.running = 0, false end
+      if self.tick>16 or self.stopNextTick then self.tick, self.running = 0, self.startNextTick end
     else
       if self.startNextTick then
         self.tick, self.running = 0, true
       end
     end
     self.stopNextTick=false
+    self.startNextTick=false
   end
 
   function self:genOutputs()
-    self.stopNextTick = self.stop.lastValue  and     self.running
-    self.startNextTick= self.start.lastValue and not self.running
+    self.stopNextTick = self.stop.lastValue
+    self.startNextTick= self.start.lastValue
+
+    self.condOut:send(self.cond.lastValue)
 
     if self.running then
       for l=1,4 do

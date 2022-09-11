@@ -97,11 +97,14 @@ function love.update(dt)
 
   debugtext=""
   if not (focusedComponent and focusedComponent.screenLock) then
-	local step = 5/scene.scale
+	local step = math.floor(20/scene.scale)
     if love.keyboard.isDown("left") then scene.cam:sub(v2d(step,0)) end
     if love.keyboard.isDown("right") then scene.cam:add(v2d(step,0)) end
     if love.keyboard.isDown("up") then scene.cam:sub(v2d(0,step)) end
     if love.keyboard.isDown("down") then scene.cam:add(v2d(0,step)) end
+    if not love.keyboard.isDown("left","right","up","down") then
+      scene.cam:floor()
+    end
   end
 
   if draggingPart then
@@ -304,17 +307,18 @@ function tick(scene,max)
   end
   local quota=max or 1000
   local i = 0
-  while #scene.nextPending > 0 do
+  while next(scene.nextPending) do
+    print(next(scene.nextPending))
     i = i + 1
     --print("cycle",i,#scene.nextPending)
     local pending=scene.nextPending
     scene.nextPending={}
     local prev=quota
-    for _,pendingPort in ipairs(pending) do
+    for pendingPort,value in pairs(pending) do
+      print(pendingPort.owner.name,"sending",value)
       if pendingPort.link then
-        --print(pendingPort,pendingPort.sending,pendingPort.owner.name)
+        print(pendingPort,pendingPort.sending,pendingPort.owner.name)
         local target=pendingPort.link.to
-        local value=pendingPort.sending
         pendingPort.lastSent=value
         --print(value)
         target.lastValue=value

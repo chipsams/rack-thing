@@ -56,7 +56,7 @@ end
 function cable_mt:draw()
   local from = self.from:getScreenPos()
   local to = self.to:getScreenPos()
-  drawCable(from,to,self.color,self.from.typeData)
+  drawCable(from,to,self.to.typeData.isLow(self.to.lastValue) and self.color or {1,1,math.sin(t*8)/2+.5},self.from.typeData)
 end
 
 function cable_mt:destroy()
