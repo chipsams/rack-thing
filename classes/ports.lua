@@ -10,6 +10,7 @@ types.standard={
   lowValue=0,
   image=love.graphics.newImage("assets/peg.png"),
   thickness=3,
+  dist=14,
 }
 function types.standard.clamp(v)
   return math.min(math.max(v,-999),999)
@@ -21,6 +22,7 @@ types.either={
   lowValue=0,
   image=love.graphics.newImage("assets/peg.png"),
   thickness=3,
+  dist=14,
 }
 function types.either:preLink(linkee)
   self.input=not linkee.input
@@ -31,6 +33,7 @@ types.boolean={
   lowValue=false,
   image=love.graphics.newImage("assets/tinyPeg.png"),
   thickness=1,
+  dist=7,
 }
 function types.boolean.clamp(v)
   if type(v)=="number" then return v>0 end
@@ -49,6 +52,12 @@ for _,type in pairs(types) do
   end
 end
 
+--- creates a port tied to a specific component
+---@param owner table
+---@param rx number
+---@param ry number
+---@param input boolean
+---@param type string
 local function createPort(owner,rx,ry,input,type)
   local newPort=setmetatable({},port_mt)
   newPort.owner=owner

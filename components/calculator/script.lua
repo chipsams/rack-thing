@@ -59,54 +59,54 @@ local function initComponent(self)
   end
   
   local function compile(expr)
-  if expr=="" then expr="l" end
-  local func="return function(l,a,x,y,z) return "..expr.." end"
-  local err
-  do
-    local brackets=expr
-    local count=1
-    while count>0 do
-      brackets,count=brackets:gsub("%b()",function(st) return ("#"):rep(#st) end)
+    if expr=="" then expr="l" end
+    local func="return function(l,a,x,y,z) return "..expr.." end"
+    local err
+    do
+      local brackets=expr
+      local count=1
+      while count>0 do
+        brackets,count=brackets:gsub("%b()",function(st) return ("#"):rep(#st) end)
+      end
+      local pos1=brackets:find("%(")
+      local pos2=brackets:find("%)")
+      if pos1 or pos2 then
+        return false,"unmatched brackets!",pos1 or pos2
+      end
     end
-    local pos1=brackets:find("%(")
-    local pos2=brackets:find("%)")
-    if pos1 or pos2 then
-      return false,"unmatched brackets!",pos1 or pos2
-    end
-  end
-  local pos=expr:find("%l%d")
-  if pos then return false,"digit can't be adjacent to port!",pos,pos+1 end
-  local pos=expr:find("%d%l")
-  if pos then return false,"digit can't be adjacent to port!",pos,pos+1 end
-  local pos,posEnd=expr:find("%(+%)+")
-  if pos then return false,"empty brackets!",pos,posEnd end
-  local pos=expr:find("[%+%-%*/%%]%)")
-  if pos then return false,"operator cannot go directly next to open side of bracket!",pos,pos+1 end
-  local pos=expr:find("%([%+%-%*/%%]")
-  if pos then return false,"operator cannot go directly next to open side of bracket!",pos,pos+1 end
-  local pos=expr:find("[%l%d]%(")
-  if pos then return false,"value cannot go directly next to closed side of bracket!",pos,pos+1 end
-  local pos=expr:find("%)[%l%d]")
-  if pos then return false,"value cannot go directly next to closed side of bracket!",pos,pos+1 end
-  local pos=expr:find("^[%+%-%*/%%]")
-  if pos then return false,"an operator cannot have nothing to its left!",pos end
-  local pos=expr:find("[%+%-%*/%%]$")
-  if pos then return false,"an operator cannot have nothing to its right!",pos end
-  local pos=expr:find("[%+%-%*/%%][%+%-%*/%%]")
-  if pos then return false,"two operators cannot be directly adjacent!",pos,pos+1 end
+    local pos=expr:find("%l%d")
+    if pos then return false,"digit can't be adjacent to port!",pos,pos+1 end
+    local pos=expr:find("%d%l")
+    if pos then return false,"digit can't be adjacent to port!",pos,pos+1 end
+    local pos,posEnd=expr:find("%(+%)+")
+    if pos then return false,"empty brackets!",pos,posEnd end
+    local pos=expr:find("[%+%-%*/%%]%)")
+    if pos then return false,"operator cannot go directly next to open side of bracket!",pos,pos+1 end
+    local pos=expr:find("%([%+%-%*/%%]")
+    if pos then return false,"operator cannot go directly next to open side of bracket!",pos,pos+1 end
+    local pos=expr:find("[%l%d]%(")
+    if pos then return false,"value cannot go directly next to closed side of bracket!",pos,pos+1 end
+    local pos=expr:find("%)[%l%d]")
+    if pos then return false,"value cannot go directly next to closed side of bracket!",pos,pos+1 end
+    local pos=expr:find("^[%+%-%*/%%]")
+    if pos then return false,"an operator cannot have nothing to its left!",pos end
+    local pos=expr:find("[%+%-%*/%%]$")
+    if pos then return false,"an operator cannot have nothing to its right!",pos end
+    local pos=expr:find("[%+%-%*/%%][%+%-%*/%%]")
+    if pos then return false,"two operators cannot be directly adjacent!",pos,pos+1 end
 
-  local pos=expr:find("%l%l")
-  if pos then
-    return false,"a port cannot directly follow another!",pos,pos+1
-  else
-    func,err=load(func,nil,nil,{})
-  end
-  if not func then
-    return false,err,1,#expr
-  else
-    err,func=pcall(func)
-    return func
-  end
+    local pos=expr:find("%l%l")
+    if pos then
+      return false,"a port cannot directly follow another!",pos,pos+1
+    else
+      func,err=load(func,nil,nil,{})
+    end
+    if not func then
+      return false,err,1,#expr
+    else
+      err,func=pcall(func)
+      return func
+    end
   end
 
   function self.recompile(l)
@@ -138,7 +138,9 @@ local function initComponent(self)
     end
     love.graphics.setFont(prev)
     seg.standardDisplay(self.out_v,pos.x+4,pos.y+7)
+    love.graphics.print(self.v_pos,pos.x+67,pos.y)
   end
+  
 end
 
 return initComponent

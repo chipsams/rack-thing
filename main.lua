@@ -35,16 +35,18 @@ for l=0,4 do
   newcomponent(scene,4,l,components.storage)
   newcomponent(scene,5,l,components.tinyPortTest)
   newcomponent(scene,6,l,components.sequencer)
+  newcomponent(scene,8,l,components.boolBoard)
+  newcomponent(scene,9,l,components.boolDisplay)
   --newcomponent(scene,10,l,components.bias)
   --newcomponent(scene,11,l,components.random)
 end
 --newcomponent(scene,7,1,components.ram)
 
-newcomponent(scene,9,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
-newcomponent(scene,9,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
-newcomponent(scene,9,2,components.TIS100,"")
-newcomponent(scene,9,3,components.TIS100,"")
-newcomponent(scene,9,4,components.TIS100,"")
+newcomponent(scene,16,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
+newcomponent(scene,16,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
+newcomponent(scene,16,2,components.TIS100,"")
+newcomponent(scene,16,3,components.TIS100,"")
+newcomponent(scene,16,4,components.TIS100,"")
 
 --newcomponent(scene,5,l,components.inputs)
 
@@ -87,7 +89,9 @@ local debugtext=""
 t = 0
 function love.update(dt)
   t = t + dt
-  tick(scene,10000)
+  if love.keyboard.isDown("tab") and love.keyboard.isDown("lshift","rshift") then
+    tick(scene,10000)
+  end
 
   local mouse=v2d(love.mouse.getPosition())*(1/scene.scale)+scene.cam
 
@@ -97,6 +101,7 @@ function love.update(dt)
     if love.keyboard.isDown("right") then scene.cam:add(v2d(4,0)) end
     if love.keyboard.isDown("up") then scene.cam:sub(v2d(0,4)) end
     if love.keyboard.isDown("down") then scene.cam:add(v2d(0,4)) end
+
   end
 
   if draggingPart then
@@ -179,6 +184,10 @@ function love.draw()
   debug(draggingPart)
   debug(linkingPort)
 
+  debug(scene.scale)
+  debug(scene.cam.x,scene.cam.y)
+  debug(love.mouse:getPosition())
+
   
   love.graphics.setCanvas()
   love.graphics.draw(mainCanvas,0,0,0,scene.scale,scene.scale)
@@ -199,7 +208,7 @@ function love.mousepressed(x,y)
         touchingComponent=component
         focusedComponent=component
         component.focused=true
-      elseif dist < 10 then
+      elseif dist < port.typeData.dist then
         if port.link then
           if port.input then
             linkingPort = port.link.from
@@ -246,7 +255,7 @@ function love.mousereleased(x,y)
     for part in scene.components:iterate() do
       if part:pointTouching(mouse) then
         local port,dist=part:nearestPort(mouse)
-        if dist < 14 then
+        if dist < port.typeData.dist then
           --print("trying to drop",dist)
           local success,err=cable.create(port,linkingPort)
           if not success then
@@ -268,7 +277,7 @@ function love.keypressed(key)
     focusedComponent:keyPressed(key)
   end
   if key == "tab" then
-    --tick(scene,10000)
+    tick(scene,10000)
   end
 end
 
@@ -328,8 +337,19 @@ end
 
 function love.wheelmoved(dx,dy)
   if dy~=0 then
+    local scalePos=v2d(love.mouse.getPosition())/scene.scale
+    
+    
+    
+    
+    local prevscale = scene.scale
+    
     scene.scale=scene.scale+dy
     scene.scale=math.max(scene.scale,1)
+    scene.scale=math.min(scene.scale,6)
+    
+    scene.cam:add(scalePos):sub(scalePos*(prevscale/scene.scale)):round()
+
     love.resize(love.graphics.getDimensions())
   end
 end

@@ -61,7 +61,8 @@ end
 
 function cable_mt:destroy()
   --self.from.owner.scene
-  self.to.lastValue=(not self.tiny) and 0 or false
+  self.from.lastValue=self.from.typeData.lowValue
+  self.to.lastValue=self.to.typeData.lowValue
   self.from.link=nil
   self.to.link=nil
 end
