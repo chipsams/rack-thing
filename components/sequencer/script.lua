@@ -61,6 +61,10 @@ local function initComponent(self)
       end
       print(self.stopNextTick)
       if self.tick>16 or self.stopNextTick then self.tick, self.running = 0, false end
+    else
+      if self.startNextTick then
+        self.tick, self.running = 0, true
+      end
     end
     self.stopNextTick=false
   end

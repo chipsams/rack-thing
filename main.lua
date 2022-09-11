@@ -97,7 +97,6 @@ function love.update(dt)
 
   debugtext=""
   if not (focusedComponent and focusedComponent.screenLock) then
-  patch-1
 	local step = 5/scene.scale
     if love.keyboard.isDown("left") then scene.cam:sub(v2d(step,0)) end
     if love.keyboard.isDown("right") then scene.cam:add(v2d(step,0)) end
