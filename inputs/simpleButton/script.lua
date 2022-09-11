@@ -1,6 +1,6 @@
 local v2d = require "vector"
 
-local defaultImg = love.graphics.newImage("inputs/simplebutton/default.png")
+local defaultImg = love.graphics.newImage("inputs/simpleButton/default.png")
 
 local input={}
 
