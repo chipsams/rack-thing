@@ -122,6 +122,46 @@ function vec_mt.__mul(a,vecOrNum)
   end
 end
 
+--- when called with a vector, multiplies each component individually. when called with a number, multiplies both components by the number. modifies the original vector.
+---@param a table
+---@param vecOrNum table/number
+---@return table
+function vec_mt:div(vecOrNum)
+  if type(vecOrNum)=="number" then
+    self.x=self.x/vecOrNum
+    self.y=self.y/vecOrNum
+    return self
+  elseif type(vecOrNum)=="table" then
+    if vecOrNum.isVec then
+      self.x=self.x/vecOrNum.x
+      self.y=self.y/vecOrNum.y
+      return self
+    else
+      error("tried to divide by a table that wasn't a vector!")
+    end
+  else
+    error("tried to divide by something that wasn't a vector or a number! type() reports as: "..type(vecOrNum))
+  end
+end
+
+--- when called with a vector, divides each component individually. when called with a number, divides both components by the number. returns a new vector.
+---@param a table
+---@param vecOrNum table/number
+---@return table
+function vec_mt.__div(a,vecOrNum)
+  if type(vecOrNum)=="number" then
+    return vector(a.x/vecOrNum,a.y/vecOrNum)
+  elseif type(vecOrNum)=="table" then
+    if vecOrNum.isVec then
+      return vector(a.x/vecOrNum.x,a.y/vecOrNum.y)
+    else
+      error("tried to divide by a table that wasn't a vector!")
+    end
+  else
+    error("tried to divide by something that wasn't a vector or a number! type() reports as: "..type(vecOrNum))
+  end
+end
+
 --- returns the magnitude of a vector.
 ---@return number
 function vec_mt:magnitude()

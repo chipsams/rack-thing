@@ -16,6 +16,8 @@ local function initComponent(self)
   self.tinyoutput=newport(self,25,27,false,"boolean")
 
   function self:genOutputs()
+    self.output:send(self.tinyinput.lastValue and 999 or 0)
+    self.tinyoutput:send(self.input.lastValue > 0)
   end
 
   function self:tickStarted()
@@ -24,11 +26,6 @@ local function initComponent(self)
   end
   
   function self:recieveInput(port,value)
-    if port==self.tinyinput then
-      self.output:send(value and 999 or 0)
-    elseif port==self.input then
-      self.tinyoutput:send(value > 0)
-    end
   end
   
   
