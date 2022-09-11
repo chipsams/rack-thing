@@ -3,8 +3,8 @@ local inputs = require "classes.inputs"
 local v2d = require "vector"
 local seg = require "graphics.7seg"
 
-local image = love.graphics.newImage("components/boolBoard/sprite.png")
-local button = love.graphics.newImage("components/boolBoard/button.png")
+local image = love.graphics.newImage("components/f$boolLogic/boolBoard/sprite.png")
+local button = love.graphics.newImage("components/f$boolLogic/boolBoard/button.png")
 
 local function initComponent(self)
   --these are the defaults, but it doesn't matter for this case.

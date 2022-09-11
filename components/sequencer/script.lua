@@ -40,7 +40,6 @@ local function initComponent(self)
     newport(self,60,24,false,"boolean"), --c
     newport(self,60,33,false,"boolean"), --d
   }
-  self.condOut=newport(self,60,42,false,"boolean")
   self.out_index=newport(self,57,86)
   
   function self:draw(pos)
@@ -63,10 +62,6 @@ local function initComponent(self)
     
     if self.running then
       self.tick = self.tick + 1
-      for l=1,4 do
-        print(({"a","b","c","d"})[l],self.inputs.sequencerData.toggleData[l-1][self.tick])
-      end
-      print(self.stopNextTick)
       if self.tick>16 or self.stopNextTick then self.tick, self.running = 0, self.startNextTick end
     else
       if self.startNextTick then
@@ -78,10 +73,8 @@ local function initComponent(self)
   end
 
   function self:genOutputs()
-    self.stopNextTick = self.stop.lastValue
-    self.startNextTick= self.start.lastValue
-
-    self.condOut:send(self.cond.lastValue)
+    self.stopNextTick = self.stop.lastValue == true
+    self.startNextTick= self.start.lastValue == true
 
     if self.running then
       for l=1,4 do

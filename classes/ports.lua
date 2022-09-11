@@ -36,17 +36,18 @@ end
 
 types.boolean={
   linkingTypes={"boolean"},
-  lowValue=false,
+  lowValue="z",
   image=love.graphics.newImage("assets/tinyPeg.png"),
   thickness=1,
   dist=7,
 }
 function types.boolean.clamp(v)
+  if v=="z" or v=="?" then return v end
   if type(v)=="number" then return v>0 end
   return v and true or false
 end
 function types.boolean.isLow(v)
-  return not v
+  return not v or v=="z"
 end
 
 for _,type in pairs(types) do
@@ -77,7 +78,6 @@ local function createPort(owner,rx,ry,input,type)
   if not types[newPort.type] then error("thats not a valid port type!") end
 
   newPort.lastSent=nil
-  newPort.sending=nil
   newPort.typeData=types[newPort.type]
 
   newPort.lastValue=newPort.typeData.lowValue
@@ -117,15 +117,10 @@ end
 function port_mt:send(v)
   if v==nil then error("passed nil into a send! "..self.owner.name) end
   v = self.typeData.clamp(v)
-  self.sending=v
-  if self.lastSent~=v then
+  if self.link and self.link.to.lastValue~=v or self.lastSent~=v then
     self.lastSent=v
     self.owner.scene.nextPending[self]=v
-  end
-  if self.link then
-    print(self.owner.name,"tried to send",v)
-  end
-  
+  end  
 end
 
 return createPort

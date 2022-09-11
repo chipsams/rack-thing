@@ -11,15 +11,26 @@ local new_ll = require "linkedList"
 local boolArr = require "classes.2dBoolArray"
 
 local components={}
-for _,file in pairs(love.filesystem.getDirectoryItems("components")) do
-  local path="components/"..file.."/script"
-  print(path)
-  local fn=require(path)
-  components[file]=function(obj,...)
-    obj.name=file
-    return fn(obj,...)
+
+local function loadComponents(path)
+  for _,file in pairs(love.filesystem.getDirectoryItems(path)) do
+    if file:find("^f%$") then
+      loadComponents(path.."/"..file)
+    elseif file:find("%.") then
+    else
+      local script_path=path.."/"..file.."/script"
+      print(script_path)
+      local fn=require(script_path)
+      components[file]=function(obj,...)
+        obj.name=file
+        return fn(obj,...)
+      end
+    end
   end
 end
+
+loadComponents("components")
+
 
 local bg_image = love.graphics.newImage("assets/bg.png")
 bg_image:setWrap("repeat", "repeat")
@@ -36,7 +47,9 @@ for l=0,4 do
   newcomponent(scene,5,l,components.tinyPortTest)
   newcomponent(scene,6,l,components.sequencer)
   newcomponent(scene,8,l,components.boolBoard)
-  newcomponent(scene,9,l,components.boolDisplay)
+  newcomponent(scene,9,l,components.transistorBoard)
+  newcomponent(scene,10,l,components.wireGroup)
+  newcomponent(scene,11,l,components.boolDisplay)
   --newcomponent(scene,10,l,components.bias)
   --newcomponent(scene,11,l,components.random)
 end
@@ -294,9 +307,6 @@ end
 function tick(scene,max)
   scene.nextPending={}
   for part in scene.components:iterate() do
-    for _,port in pairs(part.ports) do
-      port.sending=nil
-    end
     part:tickStarted()
     part:genOutputs()
     for _,port in pairs(part.ports) do
@@ -308,16 +318,13 @@ function tick(scene,max)
   local quota=max or 1000
   local i = 0
   while next(scene.nextPending) do
-    print(next(scene.nextPending))
     i = i + 1
     --print("cycle",i,#scene.nextPending)
     local pending=scene.nextPending
     scene.nextPending={}
     local prev=quota
     for pendingPort,value in pairs(pending) do
-      print(pendingPort.owner.name,"sending",value)
       if pendingPort.link then
-        print(pendingPort,pendingPort.sending,pendingPort.owner.name)
         local target=pendingPort.link.to
         pendingPort.lastSent=value
         --print(value)
@@ -327,7 +334,6 @@ function tick(scene,max)
         quota=quota-1
         if quota<=0 then goto excededQuota end
       end
-      pendingPort.sending=nil
     end
     --print("used:",prev-quota)
   end
