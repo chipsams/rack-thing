@@ -93,10 +93,11 @@ function love.update(dt)
 
   debugtext=""
   if not (focusedComponent and focusedComponent.screenLock) then
-    if love.keyboard.isDown("left") then scene.cam:sub(v2d(4,0)) end
-    if love.keyboard.isDown("right") then scene.cam:add(v2d(4,0)) end
-    if love.keyboard.isDown("up") then scene.cam:sub(v2d(0,4)) end
-    if love.keyboard.isDown("down") then scene.cam:add(v2d(0,4)) end
+	local step = 5/scene.scale
+    if love.keyboard.isDown("left") then scene.cam:sub(v2d(step,0)) end
+    if love.keyboard.isDown("right") then scene.cam:add(v2d(step,0)) end
+    if love.keyboard.isDown("up") then scene.cam:sub(v2d(0,step)) end
+    if love.keyboard.isDown("down") then scene.cam:add(v2d(0,step)) end
   end
 
   if draggingPart then
