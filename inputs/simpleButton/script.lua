@@ -4,7 +4,8 @@ local defaultImg = love.graphics.newImage("inputs/simpleButton/default.png")
 
 local input={}
 
-function input:initInput(pos,image,startState)
+function input:initInput(pos,image,config)
+  config = config or {}
   self.r_pos=pos or v2d(0,0)
   self.image=image or defaultImg
   self.w,self.h=self.image:getDimensions()
@@ -12,7 +13,8 @@ function input:initInput(pos,image,startState)
   self.dim=v2d(self.w,self.h)
   self.quadOff = love.graphics.newQuad(0,0,self.w,self.h,self.image:getDimensions())
   self.quadOn  = love.graphics.newQuad(self.w,0,self.w,self.h,self.image:getDimensions())
-  self.toggle=startState or false
+  self.toggle=config.startState or false
+  self.callback=config.callback or function()end
 end
 
 function input:update(dt)
@@ -20,6 +22,7 @@ end
 
 function input:touchStart(mouse)
   self.toggle=not self.toggle
+  self:callback(self.toggle)
 end
 
 function input:touchEnd(mouse)
