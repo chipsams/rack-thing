@@ -22,13 +22,55 @@ local function initComponent(self)
   self.tick=0
   self.running=false
 
-  for l=0,16 do
-    local input=inputs.simpleButton.create(self,v2d(14,8+l*5),br_up)
-    self.inputs[#self.inputs+1]=input
 
-    local input=inputs.simpleButton.create(self,v2d(14,10+l*5),br_down)
+  self.openBrackets={}
+  self.closeBrackets={}
+
+  local function recalc_matches()
+    for l=0,16 do
+      self.openBrackets[l].matching=nil
+      if self.openBrackets[l].toggle then
+        local level = 0
+        for i=l,16 do
+          if self.openBrackets[i].toggle then
+            level = level + 1
+          end
+          if self.closeBrackets[i].toggle then
+            level = level - 1
+            if level == 0 then 
+              self.openBrackets[l].matching=i
+              break
+            end
+          end
+        end
+      end
+      self.closeBrackets[l].matching=nil
+      if self.closeBrackets[l].toggle then
+        local level = 0
+        for i=l,0,-1 do
+          if self.closeBrackets[i].toggle then
+            level = level + 1
+          end
+          if self.openBrackets[i].toggle then
+            level = level - 1
+            if level == 0 then 
+              self.closeBrackets[l].matching=i
+              break
+            end
+          end
+        end
+      end
+    end
+  end
+
+  for l=0,16 do
+    local input=inputs.simpleButton.create(self,v2d(14,8+l*5),br_up,{callback=recalc_matches})
     self.inputs[#self.inputs+1]=input
+    self.openBrackets[l]=input
     
+    local input=inputs.simpleButton.create(self,v2d(14,10+l*5),br_down,{callback=recalc_matches})
+    self.inputs[#self.inputs+1]=input
+    self.closeBrackets[l]=input
   end
 
   self.cond=newport(self,4,38,true,"boolean")
@@ -61,7 +103,17 @@ local function initComponent(self)
   function self:tickStarted()
     
     if self.running then
-      self.tick = self.tick + 1
+      local justjumped=false
+      if self.closeBrackets[self.tick].matching and not self.cond.typeData.isLow(self.cond.lastValue) then
+        justjumped=true
+        self.tick = self.closeBrackets[self.tick].matching
+      else
+        self.tick = self.tick + 1
+      end
+      
+      while self.tick<=16 and not justjumped and self.openBrackets[self.tick].matching and self.cond.typeData.isLow(self.cond.lastValue) do
+        self.tick = self.openBrackets[self.tick].matching+1
+      end
       if self.tick>16 or self.stopNextTick then self.tick, self.running = 0, self.startNextTick end
     else
       if self.startNextTick then
