@@ -13,15 +13,11 @@ local function initComponent(self)
   self.inB = newport(self,6,34,true,"boolean")
   self.inC = newport(self,6,62,true,"boolean")
   self.outA={}
-  for i=0,3 do
-    self.outA[i] = newport(self,25,6+i*6,false,"boolean")
-  end
   self.outB={}
-  for i=0,3 do
-    self.outB[i] = newport(self,25,34+i*6,false,"boolean")
-  end
   self.outC={}
   for i=0,3 do
+    self.outA[i] = newport(self,25, 6+i*6,false,"boolean")
+    self.outB[i] = newport(self,25,34+i*6,false,"boolean")
     self.outC[i] = newport(self,25,62+i*6,false,"boolean")
   end
   
@@ -41,11 +37,7 @@ local function initComponent(self)
     local valC = self.inC.lastValue
     for i=0,3 do
       self.outA[i]:send(valA)
-    end
-    for i=0,3 do
       self.outB[i]:send(valB)
-    end
-    for i=0,3 do
       self.outC[i]:send(valC)
     end
   end

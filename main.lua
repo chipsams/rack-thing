@@ -51,6 +51,7 @@ do --spawning components
     newcomponent(scene,9,l,components.transistorBoard)
     newcomponent(scene,10,l,components.wireGroup)
     newcomponent(scene,11,l,components.boolDisplay)
+    newcomponent(scene,12,l,components.tinySplit)
     --newcomponent(scene,10,l,components.bias)
     --newcomponent(scene,11,l,components.random)
   end
