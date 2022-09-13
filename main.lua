@@ -38,30 +38,32 @@ local bg_quad
 
 local scene={cam=v2d(0,0),screenSize=v2d(100,100),components=new_ll(),occupied=boolArr()}
 
-for l=0,4 do
-  newcomponent(scene,0,l,components.constant)
-  newcomponent(scene,1,l,components.split)
-  newcomponent(scene,2,l,components.lcdScreen)
-  newcomponent(scene,3,l,components.calculator)
-  newcomponent(scene,4,l,components.storage)
-  newcomponent(scene,5,l,components.tinyPortTest)
-  newcomponent(scene,6,l,components.sequencer)
-  newcomponent(scene,8,l,components.boolBoard)
-  newcomponent(scene,9,l,components.transistorBoard)
-  newcomponent(scene,10,l,components.wireGroup)
-  newcomponent(scene,11,l,components.boolDisplay)
-  --newcomponent(scene,10,l,components.bias)
-  --newcomponent(scene,11,l,components.random)
+do --spawning components
+  for l=0,4 do
+    newcomponent(scene,0,l,components.constant)
+    newcomponent(scene,1,l,components.split)
+    newcomponent(scene,2,l,components.lcdScreen)
+    newcomponent(scene,3,l,components.calculator)
+    newcomponent(scene,4,l,components.storage)
+    newcomponent(scene,5,l,components.tinyPortTest)
+    newcomponent(scene,6,l,components.sequencer)
+    newcomponent(scene,8,l,components.boolBoard)
+    newcomponent(scene,9,l,components.transistorBoard)
+    newcomponent(scene,10,l,components.wireGroup)
+    newcomponent(scene,11,l,components.boolDisplay)
+    --newcomponent(scene,10,l,components.bias)
+    --newcomponent(scene,11,l,components.random)
+  end
+  --newcomponent(scene,7,1,components.ram)
+
+  newcomponent(scene,16,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
+  newcomponent(scene,16,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
+  newcomponent(scene,16,2,components.TIS100,"")
+  newcomponent(scene,16,3,components.TIS100,"")
+  newcomponent(scene,16,4,components.TIS100,"")
+
+  --newcomponent(scene,5,l,components.inputs)
 end
---newcomponent(scene,7,1,components.ram)
-
-newcomponent(scene,16,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
-newcomponent(scene,16,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
-newcomponent(scene,16,2,components.TIS100,"")
-newcomponent(scene,16,3,components.TIS100,"")
-newcomponent(scene,16,4,components.TIS100,"")
-
---newcomponent(scene,5,l,components.inputs)
 
 local linkingPort
 
@@ -76,7 +78,6 @@ local focusedComponent
 
 local mainCanvas
 scene.scale = 3
-
 function love.resize(w,h)
   mainCanvas=love.graphics.newCanvas(w/scene.scale,h/scene.scale)
   scene.screenSize=v2d(w/scene.scale,h/scene.scale)
