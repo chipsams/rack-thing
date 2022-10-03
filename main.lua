@@ -52,16 +52,18 @@ do --spawning components
     newcomponent(scene,10,l,components.wireGroup)
     newcomponent(scene,11,l,components.boolDisplay)
     newcomponent(scene,12,l,components.tinySplit)
+    newcomponent(scene,13,l,components.stringConcat)
     --newcomponent(scene,10,l,components.bias)
     --newcomponent(scene,11,l,components.random)
   end
   --newcomponent(scene,7,1,components.ram)
 
-  newcomponent(scene,16,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
-  newcomponent(scene,16,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
-  newcomponent(scene,16,2,components.TIS100,"")
-  newcomponent(scene,16,3,components.TIS100,"")
-  newcomponent(scene,16,4,components.TIS100,"")
+  newcomponent(scene,14,0,components.stringConstant)
+  newcomponent(scene,20,0,components.TIS100,"add 1\nmov acc right\njro 2\nsub 999")
+  newcomponent(scene,20,1,components.TIS100,"mov left acc\nadd acc\nmov acc down")
+  newcomponent(scene,20,2,components.TIS100,"")
+  newcomponent(scene,20,3,components.TIS100,"")
+  newcomponent(scene,20,4,components.TIS100,"")
 
   --newcomponent(scene,5,l,components.inputs)
 end
@@ -86,6 +88,7 @@ function love.resize(w,h)
 end
 
 function love.load()
+  love.window.setVSync(1)
   love.window.setMode(900,600,{resizable=true})
   love.graphics.setDefaultFilter("nearest")
   love.graphics.setLineStyle("rough")
@@ -159,23 +162,31 @@ function love.draw()
 
   end
   local cam=scene.cam
+  local total=0
+  local unculled=0
   for part in scene.components:iterate() do
+    total = total + 1
     if part:onScreen() then
+      unculled = unculled + 1
       part:draw((part.v_pos-cam):round())
     end
   end
+  debug(unculled.."/"..total)
+  local total=0
+  local unculled=0
   for part in scene.components:iterate() do
-    if part:onScreen() then
-      for _,port in pairs(part.ports) do
-        port:draw()
+    local onScreen=part:onScreen()
+    for _,port in pairs(part.ports) do
+      if port.input and port.link then 
+        total = total + 1
+        if onScreen or port.link.to.owner:onScreen() then
+          unculled = unculled + 1
+          port.link:draw()
+        end
       end
     end
   end
-  for part in scene.components:iterate() do
-    for _,port in pairs(part.ports) do
-      if port.input and port.link then port.link:draw() end
-    end
-  end
+  debug(unculled.."/"..total)
   
   if draggingPart then
     draggingPart:draw(draggingPart.v_pos-cam)

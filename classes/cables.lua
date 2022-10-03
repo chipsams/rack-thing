@@ -18,7 +18,8 @@ local function drawCable(from,to,color,typeData)
   local externalPoint=v2d(math.lerp(from.x,to.x,0.5),math.max(from.y,to.y)+math.min(dist,48))
 
   local subdiv
-  subdiv=math.min(1/64,8/dist)
+  subdiv=math.min(1/16,8/dist)
+  subdiv=math.max(1/32,subdiv)
 
   for l=0,1-0.001,subdiv do
     local a=from:lerp(externalPoint,l)

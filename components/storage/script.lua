@@ -11,7 +11,7 @@ local function initComponent(self)
   self.value=0
 
   self.input=newport(self,16,16,true)
-  self.save=newport(self,8,40,true)
+  self.save=newport(self,8,34,true,"boolean")
   self.output=newport(self,16,80)
   
   function self:draw(pos)
@@ -27,8 +27,10 @@ local function initComponent(self)
   end
   
   function self:tickEnd()
-    if self.save.lastValue>0 then
+    if self.save.lastValue==true then
       self.value=self.input.lastValue
+    elseif self.save.lastValue=="?" then
+      self.value=math.random(-999,999)
     end
   end
 

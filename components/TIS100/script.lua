@@ -5,7 +5,7 @@ local v2d = require "vector"
 local image = love.graphics.newImage("components/TIS100/sprite.png")
 
 local chars=" abcdefghijklmnopqrstuvwxyz_,:#-0123456789"
-local tisfont = love.graphics.newImageFont("components/TIS100/TISFONT.png",chars)
+local tisfont = love.graphics.newImageFont("graphics/monofont.png",chars)
 
 local function tisCo(self)
   local function get(src)

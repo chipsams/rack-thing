@@ -10,7 +10,7 @@ types.standard={
   lowValue=0,
   image=love.graphics.newImage("assets/peg.png"),
   thickness=3,
-  dist=14,
+  dist=8,
 }
 function types.standard.clamp(v)
   return math.min(math.max(v,-999),999)
@@ -25,7 +25,7 @@ types.either={
   lowValue=0,
   image=love.graphics.newImage("assets/peg.png"),
   thickness=3,
-  dist=14,
+  dist=8,
 }
 function types.either:preLink(linkee)
   self.input=not linkee.input
@@ -39,7 +39,7 @@ types.boolean={
   lowValue="z",
   image=love.graphics.newImage("assets/tinyPeg.png"),
   thickness=1,
-  dist=7,
+  dist=4,
 }
 function types.boolean.clamp(v)
   if v=="z" or v=="?" then return v end
@@ -48,6 +48,20 @@ function types.boolean.clamp(v)
 end
 function types.boolean.isLow(v)
   return not v or v=="z"
+end
+
+types.stringRibbon={
+  linkingTypes={"stringRibbon"},
+  lowValue="",
+  image=love.graphics.newImage("assets/stringPeg.png"),
+  thickness=2,
+  dist=8,
+}
+function types.stringRibbon.clamp(v)
+  return tostring(v)
+end
+function types.stringRibbon.isLow(v)
+  return v==""
 end
 
 for _,type in pairs(types) do
